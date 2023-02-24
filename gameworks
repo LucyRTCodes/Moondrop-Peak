@@ -2,8 +2,8 @@ const prompt = require('prompt-sync')(); //this defines the prompt bit
 
 let moneyTotal = 10 // this is the amount of money players start with
 
-function seedValues(keyName, keyCost, keyGrowTime, keyProduces, keyPlanted = false, keyShopQuantity = 0, keyInventoryQuantity = 0) {
-    let object = { name: keyName, cost: keyCost, growTime: keyGrowTime, produces: keyProduces, planted: keyPlanted, shopQuantity: keyShopQuantity, inventoryQuantity: keyInventoryQuantity }
+function seedValues(keyName, keyCost, keyGrowTime, keyProduces, keyPlanted = false, keyGrowCounter, keyShopQuantity = 0, keyInventoryQuantity = 0) {
+    let object = { name: keyName, cost: keyCost, growTime: keyGrowTime, produces: keyProduces, planted: keyPlanted, growCounter: keyGrowCounter, shopQuantity: keyShopQuantity, inventoryQuantity: keyInventoryQuantity }
     return object
 }
 function produceValues(keyName, keyCost, keyShopQuantity = 0, keyInventoryQuantity = 0) {
@@ -22,36 +22,39 @@ const strawberry = produceValues("strawberries", 4)
 const raspberry = produceValues("raspberries", 5)
 
 //seeds
-const carrotSeed = seedValues("carrot seeds", 1, 1, carrot)
+const carrotSeed = seedValues("carrot seeds", 1, 3, carrot)
 const parsnipSeed = seedValues("parsnip seeds", 2, 3, parsnip)
 const broccoliSeed = seedValues("broccoli seeds", 3, 5, broccoli)
-const asparagusSeed = seedValues("asparagus seeds", 1, 1, asparagus)
+const asparagusSeed = seedValues("asparagus seeds", 1, 3, asparagus)
 const peaSeed = seedValues("pea seeds", 2, 3, pea)
 const lettuceSeed = seedValues("lettuce seeds", 3, 5, lettuce)
-const strawberrySeed = seedValues("strawberry seeds", 1, 1, strawberry)
+const strawberrySeed = seedValues("strawberry seeds", 1, 3, strawberry)
 const raspberrySeed = seedValues("raspberry seeds", 2, 3, raspberry)
 
 
 
 const objects = [
-    carrotSeed, 
-    parsnipSeed, 
-    broccoliSeed, 
-    asparagusSeed, 
-    peaSeed, 
-    lettuceSeed, 
-    strawberrySeed, 
-    raspberrySeed, 
-    carrot, 
-    parsnip, 
-    broccoli, 
-    asparagus, 
-    pea, 
-    lettuce, 
-    strawberry, 
+    carrotSeed,
+    parsnipSeed,
+    broccoliSeed,
+    asparagusSeed,
+    peaSeed,
+    lettuceSeed,
+    strawberrySeed,
+    raspberrySeed,
+    carrot,
+    parsnip,
+    broccoli,
+    asparagus,
+    pea,
+    lettuce,
+    strawberry,
     raspberry]
 
 let shop = []
+
+seedsPlanted = []
+produceGrown = []
 
 function checkInventory() {
     inventoryContents = ""
@@ -74,15 +77,46 @@ function printGarden() {
     }
 }
 
+function grow(seed) { //Doesn't loop
+    let seedName = seed
+
+    const seedNameObjectI = objects.findIndex(objects => {
+        return objects.name == seedName
+    })
+
+    let seedDayCount = { name: seedName, count: 0 }
+    counters.push(seedDayCount)
+
+    let growTime = objects[seedNameObjectI].growTime
+
+    const seedNameI = counters.findIndex(counters => {
+        return counters.name == seedName
+    })
+        if (counters.length > 1) {
+            if (counters[seedNameI].count < growTime) {
+                console.log("Not yet") //this bit of code runs
+            }
+            else if (counters[seedNameI].count == growTime) {
+                console.log("Seed is ready")
+                counters.splice(seedNameI)
+            } else console.log("There's a problem with grow time")
+        } else {
+            console.log("grow function is broken")
+        }
+    
+}
+
+let dayCounter = { name: "day counter", count: 1 }
+let counters = [dayCounter]
+
 function seasonCycle() {
     let winter = false
-    let dayCount = 1 // this checks how many days have passed
 
     seedsPlanted = []
     produceGrown = []
 
     do {
-        console.log(`It's day ${dayCount}`)
+        console.log(`It's day ${dayCounter.count}`)
         if (produceGrown.length) {
             console.log("You have crops ready to harvest!")
         }
@@ -93,6 +127,8 @@ function seasonCycle() {
             let userAction = prompt(actionPrompt)
 
             switch (userAction) {
+
+                //THIS IS WHERE SHOP STARTS
                 case ("shop"):
                     console.log("You chose shop")
 
@@ -203,17 +239,16 @@ function seasonCycle() {
                     } while (exitShop != "yes")
                     break;
 
+                //THIS IS WHERE FARM STARTS
                 case ("farm"):
-                    console.log("You chose farm")
                     if (!winter) {
-                        console.log("You can farm!")
                         let farmChoice = prompt("Would you like to plant or harvest? ")
 
                         if (farmChoice == "plant") {
                             checkInventory()
                             if (inventoryContents) {
                                 console.log(`You have ${inventoryContents}in your inventory`)
-                                let plantSeed = prompt("What seeds would you like to plant? ")
+                                let plantSeed = prompt("Which seeds would you like to plant? ")
                                 const plantSeedIndex = objects.findIndex(objects => {
                                     return objects.name == plantSeed
                                 })
@@ -225,6 +260,7 @@ function seasonCycle() {
                                         seedsPlanted.push(choice)
                                         for (let i = 0; i < numberPlanted; i++) {
                                             choice.inventoryQuantity--
+                                            grow(plantSeed)
                                         }
                                         if (numberPlanted == 1) {
                                             console.log(`1 ${plantSeed} has been planted`)
@@ -246,19 +282,28 @@ function seasonCycle() {
 
                         } else if (farmChoice == "harvest") {
                             if (produceGrown.length) {
+                                printGarden()
                                 let harvestAll = prompt("Harvest all? ")
                                 if (harvestAll == "yes") {
-                                    console.log("All crops harvested")
-                                    checkInventory()
-                                    if (inventoryContents) {
-                                        console.log(`You have ${inventoryContents}in your inventory`)
-                                    } else {
-                                        console.log("You have nothing in your inventory.")
+                                    for (let i = 0; i < produceGrown.length; i++) {
+                                        const cropIndex = objects.findIndex(objects => {
+                                            return objects.name == i
+                                        })
+                                        objects[cropIndex].produces.inventoryQuantity++
+                                        produceGrown.splice(i)
                                     }
                                 } else {
                                     console.log(produceGrown)
-                                    harvestWhich = prompt("Which crops would you like to harvest? ")
+                                    harvestWhich = prompt("Which crop would you like to harvest? ")
+                                    const cropIndex = produceGrown.findIndex(produceGrown => {
+                                        return produceGrown.name == harvestWhich
+                                    })
+                                    produceGrown[cropIndex].produces.inventoryQuantity++
+                                    produceGrown.splice(cropIndex)
                                 }
+                                checkInventory()
+                                console.log(`You have ${inventoryContents}in your inventory`)
+                                printGarden()
                             } else {
                                 console.log("There are no crops ready to harvest")
                             }
@@ -283,8 +328,11 @@ function seasonCycle() {
             actionCount++
         } while (actionCount <= 4)
         console.log("End of day")
-        dayCount++
-    } while (dayCount <= 2)
+        for (i = 0; i < counters.length; i++) {
+            counters[i].count++
+        }
+        console.log(counters)
+    } while (dayCounter.count <= 10)
 }
 
 // THIS CONTROLS THE SEASONS
