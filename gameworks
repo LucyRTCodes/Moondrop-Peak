@@ -1,0 +1,321 @@
+const prompt = require('prompt-sync')(); //this defines the prompt bit
+
+let moneyTotal = 10 // this is the amount of money players start with
+
+function seedValues(keyName, keyCost, keyGrowTime, keyProduces, keyPlanted = false, keyShopQuantity = 0, keyInventoryQuantity = 0) {
+    let object = { name: keyName, cost: keyCost, growTime: keyGrowTime, produces: keyProduces, planted: keyPlanted, shopQuantity: keyShopQuantity, inventoryQuantity: keyInventoryQuantity }
+    return object
+}
+function produceValues(keyName, keyCost, keyShopQuantity = 0, keyInventoryQuantity = 0) {
+    let object = { name: keyName, cost: keyCost, shopQuantity: keyShopQuantity, inventoryQuantity: keyInventoryQuantity }
+    return object
+}
+
+//produce
+const carrot = produceValues("carrots", 3)
+const parsnip = produceValues("parsnips", 4)
+const broccoli = produceValues("broccolis", 5)
+const asparagus = produceValues("asparagus", 3)
+const pea = produceValues("peas", 4)
+const lettuce = produceValues("lettuces", 5)
+const strawberry = produceValues("strawberries", 4)
+const raspberry = produceValues("raspberries", 5)
+
+//seeds
+const carrotSeed = seedValues("carrot seeds", 1, 1, carrot)
+const parsnipSeed = seedValues("parsnip seeds", 2, 3, parsnip)
+const broccoliSeed = seedValues("broccoli seeds", 3, 5, broccoli)
+const asparagusSeed = seedValues("asparagus seeds", 1, 1, asparagus)
+const peaSeed = seedValues("pea seeds", 2, 3, pea)
+const lettuceSeed = seedValues("lettuce seeds", 3, 5, lettuce)
+const strawberrySeed = seedValues("strawberry seeds", 1, 1, strawberry)
+const raspberrySeed = seedValues("raspberry seeds", 2, 3, raspberry)
+
+
+
+const objects = [
+    carrotSeed, 
+    parsnipSeed, 
+    broccoliSeed, 
+    asparagusSeed, 
+    peaSeed, 
+    lettuceSeed, 
+    strawberrySeed, 
+    raspberrySeed, 
+    carrot, 
+    parsnip, 
+    broccoli, 
+    asparagus, 
+    pea, 
+    lettuce, 
+    strawberry, 
+    raspberry]
+
+let shop = []
+
+function checkInventory() {
+    inventoryContents = ""
+    for (let i = 0; i < objects.length; i++) {
+        if (objects[i].inventoryQuantity) {
+            inventoryContents += objects[i].inventoryQuantity + " " + objects[i].name + " "
+        }
+    }
+}
+
+function printGarden() {
+    if (seedsPlanted.length && produceGrown.length) {
+        console.log(`You have ${seedsPlanted} growing in your garden and ${produceGrown} ready to harvest`)
+    } else if (seedsPlanted.length) {
+        console.log(`You have ${seedsPlanted} growing in your garden`)
+    } else if (produceGrown.length) {
+        console.log(`You have ${produceGrown} ready to harvest`)
+    } else {
+        console.log("Your garden is empty")
+    }
+}
+
+function seasonCycle() {
+    let winter = false
+    let dayCount = 1 // this checks how many days have passed
+
+    seedsPlanted = []
+    produceGrown = []
+
+    do {
+        console.log(`It's day ${dayCount}`)
+        if (produceGrown.length) {
+            console.log("You have crops ready to harvest!")
+        }
+        let actionCount = 0
+        actionPrompt = "What would you like to do today? "
+
+        do {
+            let userAction = prompt(actionPrompt)
+
+            switch (userAction) {
+                case ("shop"):
+                    console.log("You chose shop")
+
+                    let sale = Math.floor(Math.random() * 10) // this checks for a sale
+                    if (sale < 4) {
+                        console.log("The shop is having a sale!")
+                        for (let i = 0; i < shop.length; i++) {
+                            shop[i].cost = Math.ceil(shop[i].cost * 0.5)
+                            console.log("The sale price of " + shop[i].name + " is " + shop[i].cost)
+                        }
+                    } else {
+                        for (let i = 0; i < shop.length; i++) {
+                            console.log("The price of " + shop[i].name + " is " + shop[i].cost)
+                        }
+                    }
+                    for (let i = 0; i < shop.length; i++) { // this tells the player what the store is selling
+                        shop[i].shopQuantity = Math.floor(Math.random() * 10)
+                    }
+
+                    let exitShop = false
+
+                    do {
+                        shopAction = prompt("Would you like to buy or sell? ") // this asks what the user wants to do and stores it as userAction
+
+                        if (shopAction === "buy") { // this starts the loop for buying
+
+                            let buyMore = true // this lets the player decide if they want to buy more than one item
+
+                            do {
+                                for (let i = 0; i < shop.length && shop[i].shopQuantity; i++) { // this tells the player what the store is selling
+                                    console.log(`This shop sells ${shop[i].shopQuantity} ${shop[i].name}`) // this says what the shop sells and how many of each
+                                }
+                                let userBuyChoice = prompt("What would you like to buy? ") // this asks what the player wants to buy and stores it as userSeedChoice
+                                console.log(`You have chosen ${userBuyChoice}`) // this tells the player what they've chosen
+
+                                const userBuyChoiceIndex = shop.findIndex(shop => {
+                                    return shop.name == userBuyChoice
+                                })
+                                let choice = shop[userBuyChoiceIndex]
+                                if (moneyTotal >= choice.cost && choice.shopQuantity > 0) {
+                                    console.log(`You have enough money to buy ${userBuyChoice}.`)
+                                    let numberBought = Number(prompt("How many would you like to buy? "))
+                                    if (numberBought <= choice.shopQuantity) {
+                                        console.log(`You bought ${numberBought} ${userBuyChoice}.`)
+                                        for (let i = 0; i < numberBought; i++) {
+                                            choice.inventoryQuantity++
+                                            moneyTotal -= choice.cost
+                                            choice.shopQuantity--
+                                        }
+                                    } else {
+                                        console.log(`That's too many ${userBuyChoice}!`)
+                                    }
+                                } else {
+                                    console.log(`You can't buy ${userBuyChoice}!`)
+                                }
+
+                                inventoryContents = ""// this tells the player their inventory
+                                for (let k = 0; k < objects.length; k++) {
+                                    if (objects[k].inventoryQuantity) {
+                                        inventoryContents += objects[k].inventoryQuantity + " " + objects[k].name + " "
+                                    }
+                                }
+                                if (inventoryContents) {
+                                    console.log(`You have ${inventoryContents}in your inventory`)
+                                } else {
+                                    console.log("You have nothing in your inventory.")
+                                }
+                                console.log(`You have £${moneyTotal}.`) // this tells the player how much money they have left
+                                buyMore = prompt("Would you like to buy something else? ") // this asks the user if they'd like to buy more
+                            } while (buyMore != "no"); // this loops the entire buying section if the player wants to buy more
+                            exitShop = prompt("Would you like to exit shop? ")
+
+                        } else if (shopAction === "sell") { // this runs when the player chooses sell
+                            checkInventory()
+                            if (inventoryContents) {
+                                console.log(`You have ${inventoryContents}in your inventory`)
+                            } else {
+                                console.log("You have nothing to sell.")
+                            }
+
+                            let userSellChoice = prompt("What would you like to sell? ") // this saves what the user wants to sell to userSellChoice
+                            console.log(`You want to sell ${userSellChoice}`)
+
+                            const userSellChoiceIndex = objects.findIndex(objects => {
+                                return objects.name == userSellChoice
+                            })
+                            let choice = objects[userSellChoiceIndex]
+                            if (choice.inventoryQuantity) {
+                                let numberSold = prompt("How many do you want to sell? ")
+                                if (numberSold <= choice.inventoryQuantity) {
+                                    for (let l = 0; l < numberSold; l++) {
+                                        choice.inventoryQuantity--
+                                        moneyTotal += choice.cost
+                                        choice.shopQuantity++
+                                    }
+                                    if (inventoryContents) {
+                                        console.log(`You have ${inventoryContents}in your inventory`)
+                                    } else {
+                                        console.log("You have nothing in your inventory.")
+                                    }
+                                    console.log(`You have £${moneyTotal}.`)
+                                }
+                            } else {
+                                console.log(`There are no ${userSellChoice} in your inventory`)
+                            }
+                            exitShop = prompt("Would you like to exit shop? ")
+                        }
+                    } while (exitShop != "yes")
+                    break;
+
+                case ("farm"):
+                    console.log("You chose farm")
+                    if (!winter) {
+                        console.log("You can farm!")
+                        let farmChoice = prompt("Would you like to plant or harvest? ")
+
+                        if (farmChoice == "plant") {
+                            checkInventory()
+                            if (inventoryContents) {
+                                console.log(`You have ${inventoryContents}in your inventory`)
+                                let plantSeed = prompt("What seeds would you like to plant? ")
+                                const plantSeedIndex = objects.findIndex(objects => {
+                                    return objects.name == plantSeed
+                                })
+                                let choice = objects[plantSeedIndex]
+                                if (choice.inventoryQuantity) {
+                                    numberPlanted = prompt("How many would you like to plant? ")
+                                    if (numberPlanted <= choice.inventoryQuantity) {
+                                        choice.planted = true
+                                        seedsPlanted.push(choice)
+                                        for (let i = 0; i < numberPlanted; i++) {
+                                            choice.inventoryQuantity--
+                                        }
+                                        if (numberPlanted == 1) {
+                                            console.log(`1 ${plantSeed} has been planted`)
+                                        } else {
+                                            console.log(`${numberPlanted} ${plantSeed} have been planted`)
+                                        }
+                                        checkInventory()
+                                        if (inventoryContents) {
+                                            console.log(`You have ${inventoryContents}in your inventory`)
+                                        } else {
+                                            console.log("You have nothing in your inventory.")
+                                        }
+                                    }
+                                }
+                            } else {
+                                console.log("You have nothing in your inventory.")
+                            }
+                            printGarden()
+
+                        } else if (farmChoice == "harvest") {
+                            if (produceGrown.length) {
+                                let harvestAll = prompt("Harvest all? ")
+                                if (harvestAll == "yes") {
+                                    console.log("All crops harvested")
+                                    checkInventory()
+                                    if (inventoryContents) {
+                                        console.log(`You have ${inventoryContents}in your inventory`)
+                                    } else {
+                                        console.log("You have nothing in your inventory.")
+                                    }
+                                } else {
+                                    console.log(produceGrown)
+                                    harvestWhich = prompt("Which crops would you like to harvest? ")
+                                }
+                            } else {
+                                console.log("There are no crops ready to harvest")
+                            }
+                        } else {
+                            console.log("You can't do that")
+                        }
+                    } else {
+                        console.log("You can't farm in winter")
+                    }
+                    break;
+
+                case ("end day"):
+                    actionCount = 5
+                    break;
+
+                default:
+                    console.log("You can't do that.")
+                    actionCount--
+                    break;
+            }
+            actionPrompt = "What else would you like to do today? "
+            actionCount++
+        } while (actionCount <= 4)
+        console.log("End of day")
+        dayCount++
+    } while (dayCount <= 2)
+}
+
+// THIS CONTROLS THE SEASONS
+for (let seasonCount = 1; seasonCount < 5; seasonCount++) {
+
+    switch (seasonCount) {
+        case 1:
+            winter = false
+            console.log("It is spring!")
+            shop = [asparagusSeed, peaSeed, lettuceSeed]
+            break;
+
+        case 2:
+            console.log("It is summer!")
+            shop = [lettuceSeed, strawberrySeed, raspberrySeed]
+            break;
+
+        case 3:
+            console.log("It is autumn!")
+            shop = [carrotSeed, parsnipSeed, broccoliSeed]
+            break;
+
+        case 4:
+            winter = true
+            console.log("It is winter!")
+            shop = []
+            seasonCount -= 4
+            break;
+
+        default:
+            console.log("Time has broken...")
+    }
+    seasonCycle()
+}
