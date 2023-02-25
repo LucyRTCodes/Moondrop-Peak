@@ -2,36 +2,55 @@ const prompt = require('prompt-sync')(); //this defines the prompt bit
 
 let moneyTotal = 10 // this is the amount of money players start with
 
-function seedValues(keyName, keyCost, keyGrowTime, keyProduces, keyPlanted = false, keyGrowCounter, keyShopQuantity = 0, keyInventoryQuantity = 0) {
+function Values(keyName, keyCost, keyGrowTime, keyProduces, keyPlanted = false, keyGrowCounter, keyShopQuantity = 0, keyInventoryQuantity = 0) {
     let object = { name: keyName, cost: keyCost, growTime: keyGrowTime, produces: keyProduces, planted: keyPlanted, growCounter: keyGrowCounter, shopQuantity: keyShopQuantity, inventoryQuantity: keyInventoryQuantity }
     return object
 }
-function produceValues(keyName, keyCost, keyShopQuantity = 0, keyInventoryQuantity = 0) {
+/*function produceValues(keyName, keyCost, keyShopQuantity = 0, keyInventoryQuantity = 0) {
     let object = { name: keyName, cost: keyCost, shopQuantity: keyShopQuantity, inventoryQuantity: keyInventoryQuantity }
     return object
-}
+}*/
 
 //produce
-const carrot = produceValues("carrots", 3)
-const parsnip = produceValues("parsnips", 4)
-const broccoli = produceValues("broccolis", 5)
-const asparagus = produceValues("asparagus", 3)
-const pea = produceValues("peas", 4)
-const lettuce = produceValues("lettuces", 5)
-const strawberry = produceValues("strawberries", 4)
-const raspberry = produceValues("raspberries", 5)
+const carrot = Values("carrots", 3, 0, 0)
+const parsnip = Values("parsnips", 4, 0, 0)
+const broccoli = Values("broccolis", 5, 0, 0)
+const asparagus = Values("asparagus", 3, 0, 0)
+const pea = Values("peas", 4, 0, 0)
+const lettuce = Values("lettuces", 5, 0, 0)
+const strawberry = Values("strawberries", 4, 0, 0)
+const raspberry = Values("raspberries", 5, 0, 0)
 
 //seeds
-const carrotSeed = seedValues("carrot seeds", 1, 3, carrot)
-const parsnipSeed = seedValues("parsnip seeds", 2, 3, parsnip)
-const broccoliSeed = seedValues("broccoli seeds", 3, 5, broccoli)
-const asparagusSeed = seedValues("asparagus seeds", 1, 3, asparagus)
-const peaSeed = seedValues("pea seeds", 2, 3, pea)
-const lettuceSeed = seedValues("lettuce seeds", 3, 5, lettuce)
-const strawberrySeed = seedValues("strawberry seeds", 1, 3, strawberry)
-const raspberrySeed = seedValues("raspberry seeds", 2, 3, raspberry)
+const carrotSeed = Values("carrot seeds", 1, 3, carrot)
+const parsnipSeed = Values("parsnip seeds", 2, 3, parsnip)
+const broccoliSeed = Values("broccoli seeds", 3, 5, broccoli)
+const asparagusSeed = Values("asparagus seeds", 1, 3, asparagus)
+const peaSeed = Values("pea seeds", 2, 3, pea)
+const lettuceSeed = Values("lettuce seeds", 3, 5, lettuce)
+const strawberrySeed = Values("strawberry seeds", 1, 3, strawberry)
+const raspberrySeed = Values("raspberry seeds", 2, 3, raspberry)
 
+//produce
+/*const carrot = { name: "carrots", cost: 3, shopQuantity: 0, inventoryQuantity: 0 }
+const parsnip = { name: "parsnips", cost: 4, shopQuantity: 0, inventoryQuantity: 0 }
+const broccoli = { name: "broccolis", cost: 5, shopQuantity: 0, inventoryQuantity: 0 }
+const asparagus = { name: "asparagus", cost: 3, shopQuantity: 0, inventoryQuantity: 0 }
+const pea = { name: "peas", cost: 4, shopQuantity: 0, inventoryQuantity: 0 }
+const lettuce = { name: "lettuces", cost: 5, shopQuantity: 0, inventoryQuantity: 0 }
+const strawberry = { name: "strawberries", cost: 4, shopQuantity: 0, inventoryQuantity: 0 }
+const raspberry = { name: "raspberries", cost: 5, shopQuantity: 0, inventoryQuantity: 0 }
 
+//seeds
+const carrotSeed = { name: "carrot seeds", cost: 1, growTime: 3, produces: carrot, planted: false, growCounter: 0, shopQuantity: 0, inventoryQuantity: 0 }
+const parsnipSeed = { name: "parsnip seeds", cost: 2, growTime: 3, produces: parsnip, planted: false, growCounter: 0, shopQuantity: 0, inventoryQuantity: 0 }
+const broccoliSeed = { name: "broccoli seeds", cost: 3, growTime: 5, produces: broccoli, planted: false, growCounter: 0, shopQuantity: 0, inventoryQuantity: 0 }
+const asparagusSeed = { name: "asparagus seeds", cost: 1, growTime: 3, produces: asparagus, planted: false, growCounter: 0, shopQuantity: 0, inventoryQuantity: 0 }
+const peaSeed = { name: "pea seeds", cost: 2, growTime: 3, produces: pea, planted: false, growCounter: 0, shopQuantity: 0, inventoryQuantity: 0 }
+const lettuceSeed = { name: "lettuce seeds", cost: 3, growTime: 5, produces: lettuce, planted: false, growCounter: 0, shopQuantity: 0, inventoryQuantity: 0 }
+const strawberrySeed = { name: "strawberry seeds", cost: 1, growTime: 3, produces: strawberry, planted: false, growCounter: 0, shopQuantity: 0, inventoryQuantity: 0 }
+const raspberrySeed = { name: "raspberry seeds", cost: 2, growTime: 3, produces: raspberry, planted: false, growCounter: 0, shopQuantity: 0, inventoryQuantity: 0 }
+*/
 
 const objects = [
     carrotSeed,
@@ -66,12 +85,22 @@ function checkInventory() {
 }
 
 function printGarden() {
+    seedsPlantedContents = ""
+    for (let i = 0; i < seedsPlanted.length; i++) {
+        if (seedsPlanted[i].planted) {
+            seedsPlantedContents += seedsPlanted[i].name
+        }
+    }
+    produceGrownContents = ""
+    for (let i = 0; i < produceGrown.length; i++) {
+            produceGrownContents += produceGrown[i].name
+    }
     if (seedsPlanted.length && produceGrown.length) {
-        console.log(`You have ${seedsPlanted} growing in your garden and ${produceGrown} ready to harvest`)
+        console.log(`You have ${seedsPlantedContents} growing in your garden and ${produceGrownContents} ready to harvest`)
     } else if (seedsPlanted.length) {
-        console.log(`You have ${seedsPlanted} growing in your garden`)
+        console.log(`You have ${seedsPlantedContents} growing in your garden`)
     } else if (produceGrown.length) {
-        console.log(`You have ${produceGrown} ready to harvest`)
+        console.log(`You have ${produceGrownContents} ready to harvest`)
     } else {
         console.log("Your garden is empty")
     }
@@ -92,18 +121,18 @@ function grow(seed) { //Doesn't loop
     const seedNameI = counters.findIndex(counters => {
         return counters.name == seedName
     })
-        if (counters.length > 1) {
-            if (counters[seedNameI].count < growTime) {
-                console.log("Not yet") //this bit of code runs
-            }
-            else if (counters[seedNameI].count == growTime) {
-                console.log("Seed is ready")
-                counters.splice(seedNameI)
-            } else console.log("There's a problem with grow time")
-        } else {
-            console.log("grow function is broken")
+    if (counters.length > 1) {
+        if (counters[seedNameI].count < growTime) {
+            console.log("Not yet") //this bit of code runs
         }
-    
+        else if (counters[seedNameI].count == growTime) {
+            console.log("Seed is ready")
+            counters.splice(seedNameI)
+        } else console.log("There's a problem with grow time")
+    } else {
+        console.log("grow function is broken")
+    }
+
 }
 
 let dayCounter = { name: "day counter", count: 1 }
@@ -327,6 +356,20 @@ function seasonCycle() {
             actionPrompt = "What else would you like to do today? "
             actionCount++
         } while (actionCount <= 4)
+
+        if (seedsPlanted.length) {
+            for (let checkSeedPlanted = 1; checkSeedPlanted < seedsPlanted.length; checkSeedPlanted++) {
+                if (counters[checkSeedPlanted].count < seedPlanted[checkSeedPlanted].growTime) {
+                    console.log(seedsPlanted[checkSeedPlanted].name + " is still growing")
+                } else if (counters[checkSeedPlanted].count = seedPlanted[checkSeedPlanted].growTime) {
+                    console.log("Time to turn seeds into veggies")
+                } else {
+                    console.log("Something has gone very wrong")
+                }
+            } console.log("something in the for loop is broken")
+        } else {
+            console.log("That whole bit of code isn't running")
+        }
         console.log("End of day")
         for (i = 0; i < counters.length; i++) {
             counters[i].count++
