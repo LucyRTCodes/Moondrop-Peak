@@ -27,27 +27,6 @@ const lettuceSeed = Values("lettuce seeds", 3, 5, lettuce)
 const strawberrySeed = Values("strawberry seeds", 1, 3, strawberry)
 const raspberrySeed = Values("raspberry seeds", 2, 3, raspberry)
 
-//produce
-/*const carrot = { name: "carrots", cost: 3, shopQuantity: 0, inventoryQuantity: 0 }
-const parsnip = { name: "parsnips", cost: 4, shopQuantity: 0, inventoryQuantity: 0 }
-const broccoli = { name: "broccolis", cost: 5, shopQuantity: 0, inventoryQuantity: 0 }
-const asparagus = { name: "asparagus", cost: 3, shopQuantity: 0, inventoryQuantity: 0 }
-const pea = { name: "peas", cost: 4, shopQuantity: 0, inventoryQuantity: 0 }
-const lettuce = { name: "lettuces", cost: 5, shopQuantity: 0, inventoryQuantity: 0 }
-const strawberry = { name: "strawberries", cost: 4, shopQuantity: 0, inventoryQuantity: 0 }
-const raspberry = { name: "raspberries", cost: 5, shopQuantity: 0, inventoryQuantity: 0 }
-
-//seeds
-const carrotSeed = { name: "carrot seeds", cost: 1, growTime: 3, produces: carrot, planted: false, growCounter: 0, shopQuantity: 0, inventoryQuantity: 0 }
-const parsnipSeed = { name: "parsnip seeds", cost: 2, growTime: 3, produces: parsnip, planted: false, growCounter: 0, shopQuantity: 0, inventoryQuantity: 0 }
-const broccoliSeed = { name: "broccoli seeds", cost: 3, growTime: 5, produces: broccoli, planted: false, growCounter: 0, shopQuantity: 0, inventoryQuantity: 0 }
-const asparagusSeed = { name: "asparagus seeds", cost: 1, growTime: 3, produces: asparagus, planted: false, growCounter: 0, shopQuantity: 0, inventoryQuantity: 0 }
-const peaSeed = { name: "pea seeds", cost: 2, growTime: 3, produces: pea, planted: false, growCounter: 0, shopQuantity: 0, inventoryQuantity: 0 }
-const lettuceSeed = { name: "lettuce seeds", cost: 3, growTime: 5, produces: lettuce, planted: false, growCounter: 0, shopQuantity: 0, inventoryQuantity: 0 }
-const strawberrySeed = { name: "strawberry seeds", cost: 1, growTime: 3, produces: strawberry, planted: false, growCounter: 0, shopQuantity: 0, inventoryQuantity: 0 }
-const raspberrySeed = { name: "raspberry seeds", cost: 2, growTime: 3, produces: raspberry, planted: false, growCounter: 0, shopQuantity: 0, inventoryQuantity: 0 }
-*/
-
 const objects = [
     carrotSeed,
     parsnipSeed,
@@ -201,7 +180,7 @@ function seasonCycle() {
                                 //    return shop.name == userBuyChoice
                                 //})
                                 const userBuyChoiceIndex = nameSearch(userBuyChoice, shop)
-                                
+
                                 let choice = shop[userBuyChoiceIndex]
                                 if (moneyTotal >= choice.cost && choice.shopQuantity > 0) {
                                     console.log(`You have enough money to buy ${userBuyChoice}.`)
