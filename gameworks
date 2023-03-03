@@ -2,31 +2,32 @@ const prompt = require('prompt-sync')(); //this defines the prompt bit
 
 let moneyTotal = 10 // this is the amount of money players start with
 
-function Values(keyName, keyCost, keyGrowTime, keyProduces, keyPlanted = false, keyGrowCounter, keyShopQuantity = 0, keyInventoryQuantity = 0) {
-    let object = { name: keyName, cost: keyCost, growTime: keyGrowTime, produces: keyProduces, planted: keyPlanted, growCounter: keyGrowCounter, shopQuantity: keyShopQuantity, inventoryQuantity: keyInventoryQuantity }
+function Values(keyName, keyType, keyCost, keyGrowTime, keyProduces, keyPlanted = false, keyGrowCounter, keyShopQuantity = 0, keyInventoryQuantity = 0) {
+    let object = { name: keyName, type: keyType, cost: keyCost, growTime: keyGrowTime, produces: keyProduces, planted: keyPlanted, growCounter: keyGrowCounter, shopQuantity: keyShopQuantity, inventoryQuantity: keyInventoryQuantity }
     return object
 }
 
 //produce
-const carrot = Values("carrots", 3, 0, 0)
-const parsnip = Values("parsnips", 4, 0, 0)
-const broccoli = Values("broccolis", 5, 0, 0)
-const asparagus = Values("asparagus", 3, 0, 0)
-const pea = Values("peas", 4, 0, 0)
-const lettuce = Values("lettuces", 5, 0, 0)
-const strawberry = Values("strawberries", 4, 0, 0)
-const raspberry = Values("raspberries", 5, 0, 0)
+const carrot = Values("carrots", "produce", 3, 0, 0)
+const parsnip = Values("parsnips", "produce", 4, 0, 0)
+const broccoli = Values("broccolis", "produce", 5, 0, 0)
+const asparagus = Values("asparagus", "produce", 3, 0, 0)
+const pea = Values("peas", "produce", 4, 0, 0)
+const lettuce = Values("lettuces", "produce", 5, 0, 0)
+const strawberry = Values("strawberries", "produce", 4, 0, 0)
+const raspberry = Values("raspberries", "produce", 5, 0, 0)
 
 //seeds
-const carrotSeed = Values("carrot seeds", 1, 3, carrot)
-const parsnipSeed = Values("parsnip seeds", 2, 3, parsnip)
-const broccoliSeed = Values("broccoli seeds", 3, 5, broccoli)
-const asparagusSeed = Values("asparagus seeds", 1, 3, asparagus)
-const peaSeed = Values("pea seeds", 2, 3, pea)
-const lettuceSeed = Values("lettuce seeds", 3, 5, lettuce)
-const strawberrySeed = Values("strawberry seeds", 1, 3, strawberry)
-const raspberrySeed = Values("raspberry seeds", 2, 3, raspberry)
+const carrotSeed = Values("carrot seeds", "seed", 1, 3, carrot)
+const parsnipSeed = Values("parsnip seeds", "seed", 2, 3, parsnip)
+const broccoliSeed = Values("broccoli seeds", "seed", 3, 5, broccoli)
+const asparagusSeed = Values("asparagus seeds", "seed", 1, 3, asparagus)
+const peaSeed = Values("pea seeds", "seed", 2, 3, pea)
+const lettuceSeed = Values("lettuce seeds", "seed", 3, 5, lettuce)
+const strawberrySeed = Values("strawberry seeds", "seed", 1, 3, strawberry)
+const raspberrySeed = Values("raspberry seeds", "seed", 2, 3, raspberry)
 
+// all objects
 const objects = [
     carrotSeed,
     parsnipSeed,
@@ -98,23 +99,11 @@ function printGarden() {
 // THIS GROWS SEEDS
 function grow(seed) {
     let seedName = seed
-
-    //const seedNameObjectI = objects.findIndex(objects => {
-    //    return objects.name == seedName
-    //})
-
-    const seedNameObjectI = nameSearch(seedName, objects)
-
+    let seedNameObjectI = nameSearch(seedName, objects)
     let seedDayCount = { name: seedName, count: 0 }
     counters.push(seedDayCount)
-
     let growTime = objects[seedNameObjectI].growTime
-
-    //const seedNameI = counters.findIndex(counters => {
-    //    return counters.name == seedName
-    //})
-
-    const seedNameI = nameSearch(seedName, counters)
+    let seedNameI = nameSearch(seedName, counters)
 }
 
 // THESE ARE ALL THE COUNTERS
@@ -175,12 +164,7 @@ function seasonCycle() {
                                 }
                                 let userBuyChoice = prompt("What would you like to buy? ") // this asks what the player wants to buy and stores it as userSeedChoice
                                 console.log(`You have chosen ${userBuyChoice}`) // this tells the player what they've chosen
-
-                                //const userBuyChoiceIndex = shop.findIndex(shop => {
-                                //    return shop.name == userBuyChoice
-                                //})
-                                const userBuyChoiceIndex = nameSearch(userBuyChoice, shop)
-
+                                let userBuyChoiceIndex = nameSearch(userBuyChoice, shop)
                                 let choice = shop[userBuyChoiceIndex]
                                 if (moneyTotal >= choice.cost && choice.shopQuantity > 0) {
                                     console.log(`You have enough money to buy ${userBuyChoice}.`)
@@ -226,13 +210,7 @@ function seasonCycle() {
 
                             let userSellChoice = prompt("What would you like to sell? ") // this saves what the user wants to sell to userSellChoice
                             console.log(`You want to sell ${userSellChoice}`)
-
-                            //const userSellChoiceIndex = objects.findIndex(objects => {
-                            //    return objects.name == userSellChoice
-                            //})
-
-                            const userSellChoiceIndex = nameSearch(userSellChoice, objects)
-
+                            let userSellChoiceIndex = nameSearch(userSellChoice, objects)
                             let choice = objects[userSellChoiceIndex]
                             if (choice.inventoryQuantity) {
                                 let numberSold = prompt("How many do you want to sell? ")
@@ -270,12 +248,7 @@ function seasonCycle() {
                             if (inventoryContents) {
                                 console.log(`You have ${inventoryContents}in your inventory`)
                                 let plantSeed = prompt("Which seeds would you like to plant? ")
-                                //const plantSeedIndex = objects.findIndex(objects => {
-                                //    return objects.name == plantSeed
-                                //})
-
-                                const plantSeedIndex = nameSearch(plantSeed, objects)
-
+                                let plantSeedIndex = nameSearch(plantSeed, objects)
                                 let choice = objects[plantSeedIndex]
                                 if (choice.inventoryQuantity) {
                                     numberPlanted = prompt("How many would you like to plant? ")
@@ -311,21 +284,13 @@ function seasonCycle() {
                                 let harvestAll = prompt("Harvest all? ")
                                 if (harvestAll == "yes") {
                                     for (let i = 1; i < produceGrown.length; i++) {
-                                        //const cropIndex = objects.findIndex(objects => {
-                                        //    return objects.name == i
-                                        //})
                                         produceGrown[i].inventoryQuantity++
                                         produceGrown.splice(i)
                                     }
                                 } else {
                                     produceGrown.forEach(element => console.log(element.name))
                                     harvestWhich = prompt("Which crop would you like to harvest? ")
-                                    //const cropIndex = produceGrown.findIndex(produceGrown => {
-                                    //    return produceGrown.name == harvestWhich
-                                    //})
-
-                                    const cropIndex = nameSearch(harvestWhich, produceGrown)
-
+                                    let cropIndex = nameSearch(harvestWhich, produceGrown)
                                     produceGrown[cropIndex].inventoryQuantity++
                                     produceGrown.splice(cropIndex)
                                 }
